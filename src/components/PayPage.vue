@@ -6,12 +6,13 @@
     </div>
     <div v-else class="p-5">
          <!-- license begin -->
+          
          <div id="headlessui-radiogroup-:ri:" role="radiogroup" aria-labelledby="headlessui-label-:rj:">
         <div class="flex justify-between items-end">
-            <div class="text-sm font-medium text-gray-600" id="headlessui-label-:rj:" data-headlessui-state="">Who are
-                you buying a license for?</div>
+            <!-- <div class="text-sm font-medium text-gray-600" id="headlessui-label-:rj:" data-headlessui-state="">Who are you buying a license for?</div> -->
         </div>
-        <div class="mx-0 mt-2.5 grid grid-cols-1 gap-y-2 sm:grid-cols-3 sm:gap-x-4">
+
+        <div v-show="showLicenseDialog" class="mx-0 mt-2.5 grid grid-cols-1 gap-y-2 sm:grid-cols-3 sm:gap-x-4">
             <div v-for="(option, index) in options1" :key="index"
                 class="relative flex cursor-pointer rounded-lg bg-white p-4 shadow-sm focus:outline-none" role="radio"
                 tabindex="0" @click="selectOptionTop(index)">
@@ -41,9 +42,11 @@
          <!-- license end -->
      
          <!-- 线 beign -->
-         <div v-if="selectedIndex1!=null" class="w-full border-t border-gray-200 my-8"></div>
+         <!-- <div v-if="selectedIndex1!=null" class="w-full border-t border-gray-200 my-8"></div> -->
          <!-- 线 end -->
-     
+
+        <!-- 上间隙 -->
+         <div class="mt-20"></div>
      
          <div v-if="selectedIndex1==0">
         <!-- personal license begin -->
@@ -284,11 +287,10 @@
         </div>
          </div>
          <div v-if="selectedIndex1!=null" class="text-gray-600 py-4">
-             <div class="flex flex-start items-center"><div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 text-blue-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path></svg></div><span class="ml-3 text-sm font-normal text-gray-600">No commitment and no cancellation fees. You can <span class="font-semibold">cancel anytime</span>.</span></div>
-             <div class="flex flex-start items-center py-0.5"><div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 text-blue-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path></svg></div>
-                 <!-- <span class="ml-3 text-sm font-normal text-gray-600">The license key and invoice will be sent to&nbsp; {{activateEmail}} after payment</span> -->
+             <div class="flex flex-start items-center"><div class="flex-shrink-0"></div><span class="text-sm font-normal text-gray-600">No commitment and no cancellation fees. You can <span class="font-semibold">cancel anytime</span>.</span></div>
+             <!-- <div class="flex flex-start items-center py-0.5"><div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 text-blue-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path></svg></div>
                  <span class="ml-3 text-sm font-normal text-gray-600">The license key and invoice will be sent to the email address provided on the payment page.</span>
-            </div>
+            </div> -->
          </div>
     </div>
 </template>
@@ -299,7 +301,9 @@ import DashLoading from './DashLoading.vue';
 import { desDecrypt } from '@/desService';
 import { ref, onMounted} from 'vue';
 import axios from "axios";
+
 const loading = ref(false);
+const showLicenseDialog = ref(false);
 const fmDialog = ref(null)
 const activateEmail = ref('')
 const isLoading = ref(true)
@@ -342,7 +346,7 @@ function fetchPriceData(){
     }
 }
 function handerData(response){
-    initPaddle(response.token, response.sandbox)
+    //initPaddle(response.token, response.sandbox)
     isLoading.value = false
     if(response.email){
         activateEmail.value = response.email;
@@ -394,7 +398,7 @@ const options1 = [
     { title: 'Site License', description: 'For everyone in your company or school' }
 ];
 // 当前选中选项的索引
-const selectedIndex1 = ref(null);
+const selectedIndex1 = ref(0);
 
 const personalPrices = ref([])
 const teamPrices = ref([])
