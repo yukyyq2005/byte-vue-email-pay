@@ -5,6 +5,10 @@
         <DashLoading/>
     </div>
     <div v-else class="p-5">
+         <!-- Title -->
+         <div class="text-center mb-8">
+             <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">Upgrade to Pro</h2>
+         </div>
          <!-- license begin -->
           
          <div id="headlessui-radiogroup-:ri:" role="radiogroup" aria-labelledby="headlessui-label-:rj:">
@@ -46,24 +50,19 @@
          <!-- 线 end -->
 
         <!-- 上间隙 -->
-         <div class="mt-20"></div>
+         <div class="mt-10"></div>
      
          <div v-if="selectedIndex1==0">
         <!-- personal license begin -->
-        <div class="flex">
-            <fieldset>
-                <div class="mb-4 flex items-center space-x-4">
-                    <div class="flex text-sm font-medium text-gray-600">Billed</div>
-                    <div class="ml-3 flex items-center"><input v-model="billingBind1" id="Y" name="billing" type="radio"
-                            class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" value="Y"
-                            checked=""><label for="Y"
-                            class="ml-2 block text-sm font-medium text-gray-700">Yearly</label>
-                    </div>
-                    <div class="flex items-center"><input v-model="billingBind1" id="M" name="billing" type="radio"
-                            class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" value="M"><label
-                            for="M" class="ml-2 block text-sm font-medium text-gray-700">Monthly</label></div>
-                </div>
-            </fieldset>
+        <div class="flex items-center justify-center">
+            <div class="relative bg-gray-100 rounded-lg p-0.5 flex mb-5">
+              <button type="button" :class="buttonClass1('Y')" @click="billingBind1 = 'Y'" :disabled="billingBind1 === 'Y'">
+                yearly
+              </button>
+              <button type="button" :class="buttonClass1('M')" @click="billingBind1 = 'M'" :disabled="billingBind1 === 'M'">
+                monthly
+              </button>
+            </div>
         </div>
         <div id="headlessui-radiogroup-:r9d:" role="radiogroup">
             <div class="mt-2.5 grid grid-cols-2 gap-x-4 mb-8">
@@ -139,20 +138,15 @@
         <!-- 线 begin -->
         <div v-show="selectedUserTeam!=null" class="w-full border-t border-gray-200 my-8"></div>
         <!-- 线 end -->
-        <div v-show="selectedUserTeam!=null" class="flex">
-            <fieldset>
-                <div class="mb-4 flex items-center space-x-4">
-                    <div class="flex text-sm font-medium text-gray-600">Billed</div>
-                    <div class="ml-3 flex items-center"><input v-model="billingBind2" id="Y" name="billing" type="radio"
-                            class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" value="Y"
-                            checked=""><label for="Y"
-                            class="ml-2 block text-sm font-medium text-gray-700">Yearly</label>
-                    </div>
-                    <div class="flex items-center"><input v-model="billingBind2" id="M" name="billing" type="radio"
-                            class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" value="M"><label
-                            for="M" class="ml-2 block text-sm font-medium text-gray-700">Monthly</label></div>
-                </div>
-            </fieldset>
+        <div v-show="selectedUserTeam!=null" class="flex items-center justify-center">
+            <div class="relative bg-gray-100 rounded-lg p-0.5 flex mb-5">
+              <button type="button" :class="buttonClass2('Y')" @click="billingBind2 = 'Y'" :disabled="billingBind2 === 'Y'">
+                yearly
+              </button>
+              <button type="button" :class="buttonClass2('M')" @click="billingBind2 = 'M'" :disabled="billingBind2 === 'M'">
+                monthly
+              </button>
+            </div>
         </div>
         <div id="headlessui-radiogroup-:r9d:" role="radiogroup">
             <div class="mt-2.5 grid grid-cols-2 gap-x-4 mb-8">
@@ -293,103 +287,60 @@
             </div> -->
          </div>
     </div>
+
+    <StriplePay v-if="stripePayShow" @confirmed="handleConfirm2" @paymentSuccessNofi="paymentSuccessNofi"  :payPriceId="payPriceId" :url="url" :app_pk="app_pk"/>
+    <Success  v-if="userEmail" :customerEmail="userEmail"/>
 </template>
 
 <script setup>
 import ComparePage from './ComparePage.vue';
 import DashLoading from './DashLoading.vue';
-import { desDecrypt } from '@/desService';
+// import { desDecrypt } from '@/desService';
 import { ref, onMounted} from 'vue';
-import axios from "axios";
+import Success from './Success.vue';
+import StriplePay from './StriplePay.vue';
+// import axios from "axios";
 
+const stripePayShow = ref(false)
+const userEmail = ref('')
 const loading = ref(false);
 const showLicenseDialog = ref(false);
 const fmDialog = ref(null)
 const activateEmail = ref('')
-const isLoading = ref(true)
+const isLoading = ref(false)
+
+let app_pk = ref('')
+let url = ref('')    
+const payPriceId = ref("")
+
+const is_test_mode = ref(true)
 
 onMounted(() => {
+
+    //for 测试 begin
+    app_pk.value = 'pk_live_51Rj7JcKI2wvxceBvr3OqEyAbkjX7tlsWj2MLntSMbpkb0vuC7iRF0AiML38jr30FfUXZhsb0FcCMo9JrkBrcn4xL00KBmYCKFh'
+    url.value = 'https://stripe.my-addon.com/create-checkout-session'
+    personalPrices.value = [
+        { yprice: '49.99', mprice: '19.95', yid: "price_1RnYrHKI2wvxceBvu1qEqHEb", mid: "price_1RnYrSKI2wvxceBvnArHqis4" },
+        { yprice: '79.99', mprice: '29.95', yid: "price_1RnYrHKI2wvxceBvu1qEqHEb", mid: "price_1RnYrSKI2wvxceBvnArHqis4" }
+    ];
+    //for 测试 end
+
+    if (is_test_mode) {
+        app_pk.value = 'pk_test_51Rj7JcKI2wvxceBvi0rfcA5nZHmAYIA0W6oMJV2GK0NLLYb4woCCZBXRNLD5PAaSREwKdOPe5dXBNQiTGrD2lAe900fwYhMc5F'
+        url.value = 'https://sandbox.stripe.my-addon.com/create-checkout-session'
+        personalPrices.value = [
+            { yprice: '49.99', mprice: '19.95', yid: "price_1RnYljKI2wvxceBvXKu77yLa", mid: "price_1RnYkSKI2wvxceBvJycNwi2E" },
+            { yprice: '79.99', mprice: '29.95', yid: "price_1RnYljKI2wvxceBvXKu77yLa", mid: "price_1RnYkSKI2wvxceBvJycNwi2E" }
+        ];
+    }
+    payPriceId.value = personalPrices.value[0].yid;//默认是包年
+
     const licenseKeyInput = document.getElementById('licenseKey');
     if (licenseKeyInput) {
         activateEmail.value = licenseKeyInput.placeholder;
     }
-  fetchPriceData()
 });
-function initPaddle(token, sandbox){
-    const script = document.createElement('script');
-    script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
-    script.onload = () => {
-        if (sandbox){
-            Paddle.Environment.set("sandbox");
-        }
-        Paddle.Initialize({
-            eventCallback:()=>{
-                loading.value = false
-            },
-            token:token
-            // checkout:{settings:{variant: "one-page"}},
-        });
-    };
-    document.head.appendChild(script);
-}
-
-function fetchPriceData(){
-    try {
-        google.script.run.withSuccessHandler((response) =>{
-            handerData(response)
-        })
-        .withFailureHandler(function (e) {
-            handerError(e);
-        }).getEmailPriceList()
-    } catch (e) {
-        handerError(e);
-    }
-}
-function handerData(response){
-    //initPaddle(response.token, response.sandbox)
-    isLoading.value = false
-    if(response.email){
-        activateEmail.value = response.email;
-    }
-    personalPrices.value = response.personalPrices;
-    teamPrices.value = response.teamPrices;
-    sitePrices.value = response.sitePrices;
-    teamOptions.value = response.teamOptions
-    siteOptions.value = response.siteOptions
-}
-function getPriceList(){
-    let url = 'https://pay.paddle.pipiform.com/google/form/payment/list'
-    axios.get(url)
-        .then(response => {
-            handerData(desDecrypt(response.data))
-        })
-        .catch(error => {
-            console.error('fail:', error);
-        });
-}
-function handerError(e){
-    getPriceList()
-}
-
-function openCheckout(priceId) {
-    if (!priceId){
-        loading.value = false
-    }
-    try {
-        if (activateEmail.value) {
-        Paddle.Checkout.open({
-            items: [{ priceId: priceId }],
-            customer: { email: activateEmail.value }
-        });
-    } else {
-        Paddle.Checkout.open({
-            items: [{ priceId: priceId }]
-        });
-    }
-    } catch (error) {
-        loading.value = false
-    }
-}
 
 // 定义选项数据
 const options1 = [
@@ -404,37 +355,6 @@ const personalPrices = ref([])
 const teamPrices = ref([])
 const sitePrices = ref([])
 
-// const personalPrices = ref([{ yprice:"49.95", mprice:"19.95", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
-//                         { yprice:"79.95", mprice:"29.95", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}]);
-// const teamPrices =    ref([[{yprice:"99.90", mprice:"39.90", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
-//                         {yprice:"159.90", mprice:"59.90", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                         [{yprice:"149.85", mprice:"59.85", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
-//                         {yprice:"239.85", mprice:"89.85", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                         [{yprice:"199.80", mprice:"79.80", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
-//                         {yprice:"319.80", mprice:"119.80", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                         [{yprice:"249.75", mprice:"99.75", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
-//                         {yprice:"399.75", mprice:"149.75", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                         [{yprice:"299.70", mprice:"119.70", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
-//                         {yprice:"479.70", mprice:"179.70", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                         [{yprice:"349.65", mprice:"139.65", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
-//                         {yprice:"559.65", mprice:"209.65", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                         [{yprice:"399.60", mprice:"159.60", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
-//                         {yprice:"639.60", mprice:"239.60", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                         [{yprice:"449.55", mprice:"179.55", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
-//                         {yprice:"719.55", mprice:"269.55", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                         [{yprice:"499.50", mprice:"199.50", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
-//                         {yprice:"799.50", mprice:"299.50", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}]
-//                        ]);
-// const sitePrices = ref([[{yprice:"495.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"595.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                      [{yprice:"795.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"990.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                      [{yprice:"1195.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"1495.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                      [{yprice:"1490.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"1990.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                      [{yprice:"1995.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"2495.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                      [{yprice:"2490.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"2990.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                      [{yprice:"2980.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"3480.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
-//                      [{yprice:"3475.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"3975.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}]
-//                     ]);
-
 const teamOptions = ref(['2 users','3 users','4 users','5 users','6 users','7 users','8 users','9 users','10 users']);
 const siteOptions = ref(['25 users', '50 users', '100 users', '200 users', '500 users', '1000 users', '2000 users', 'Unlimited users']);
 
@@ -446,6 +366,25 @@ const selectedEdition2 = ref(1);
 const selectedEdition3 = ref(1);
 const billingBind1 = ref('Y');  // 默认选择 Yearly
 const billingBind2 = ref('Y');  // 默认选择 Yearly
+
+
+const buttonClass1 = (type) => {
+  return [
+    "relative border-transparent rounded-md py-2 w-1/2 text-sm leading-5 font-medium whitespace-nowrap focus:outline-none focus:z-10 select-none transition ease-in-out duration-150 sm:w-auto px-8 capitalize",
+    billingBind1.value === type
+      ? "bg-white shadow-sm text-gray-700"
+      : "text-gray-500 hover:text-gray-700",
+  ];
+};
+
+const buttonClass2 = (type) => {
+  return [
+    "relative border-transparent rounded-md py-2 w-1/2 text-sm leading-5 font-medium whitespace-nowrap focus:outline-none focus:z-10 select-none transition ease-in-out duration-150 sm:w-auto px-8 capitalize",
+    billingBind2.value === type
+      ? "bg-white shadow-sm text-gray-700"
+      : "text-gray-500 hover:text-gray-700",
+  ];
+};
 
 const selectOptionTop = (index) => {
     console.log(index + " top")
@@ -479,11 +418,12 @@ function compareClick(){
     fmDialog.value.setIsOpen(true)
     console.log('compareClick')
 }
+
 function continueButtonClick(){
     let priceId = ''
     if (selectedIndex1.value == 0){
-        console.log(selectedEdition1.value)
-        console.log(personalPrices.value)
+        // console.log(selectedEdition1.value)
+        // console.log(personalPrices.value)
         if (billingBind1.value == 'Y'){
             priceId = personalPrices.value[selectedEdition1.value].yid
         }else{
@@ -502,12 +442,17 @@ function continueButtonClick(){
         console.log(sitePrices.value)
         priceId = sitePrices.value[selectedUserSite.value][selectedEdition3.value].yid
     }
-    if (priceId.includes("buy.stripe.com")){
-        window.open(priceId, '_blank');
-        return
-    }
-    loading.value = true
     console.log(priceId)
     openCheckout(priceId)
+}
+function openCheckout(priceId){
+    payPriceId.value = priceId
+    stripePayShow.value = true
+}
+function handleConfirm2(){
+  stripePayShow.value = false
+}
+function paymentSuccessNofi(email){
+  userEmail.value = email
 }
 </script>
