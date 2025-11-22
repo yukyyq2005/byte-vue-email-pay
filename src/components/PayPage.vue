@@ -1,0 +1,509 @@
+<template>
+
+    <ComparePage ref="fmDialog" />
+    <div v-if="isLoading">
+        <DashLoading/>
+    </div>
+    <div v-else class="p-5">
+         <!-- license begin -->
+         <div id="headlessui-radiogroup-:ri:" role="radiogroup" aria-labelledby="headlessui-label-:rj:">
+        <div class="flex justify-between items-end">
+            <div class="text-sm font-medium text-gray-600" id="headlessui-label-:rj:" data-headlessui-state="">Who are
+                you buying a license for?</div>
+        </div>
+        <div class="mx-0 mt-2.5 grid grid-cols-1 gap-y-2 sm:grid-cols-3 sm:gap-x-4">
+            <div v-for="(option, index) in options1" :key="index"
+                class="relative flex cursor-pointer rounded-lg bg-white p-4 shadow-sm focus:outline-none" role="radio"
+                tabindex="0" @click="selectOptionTop(index)">
+                <!-- 覆盖绝对定位的边框层 -->
+                <span class="pointer-events-none absolute -inset-px rounded-lg"
+                    :class="selectedIndex1 === index ? 'border-2 border-indigo-500' : 'border border-gray-300'"
+                    aria-hidden="true"></span>
+
+                <span class="flex flex-1 relative">
+                    <span class="flex flex-col">
+                        <span class="block text-sm font-medium text-gray-900">{{ option.title }}</span>
+                        <span class="mt-4 flex items-center text-xs text-gray-500 font-medium">{{ option.description
+                            }}</span>
+                    </span>
+                </span>
+
+                <!-- 选中时显示的图标 -->
+                <svg v-if="selectedIndex1 === index" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                    fill="currentColor" class="h-5 w-5 text-indigo-600">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                        clip-rule="evenodd" />
+                </svg>
+            </div>
+        </div>
+         </div>
+         <!-- license end -->
+     
+         <!-- 线 beign -->
+         <div v-if="selectedIndex1!=null" class="w-full border-t border-gray-200 my-8"></div>
+         <!-- 线 end -->
+     
+     
+         <div v-if="selectedIndex1==0">
+        <!-- personal license begin -->
+        <div class="flex">
+            <fieldset>
+                <div class="mb-4 flex items-center space-x-4">
+                    <div class="flex text-sm font-medium text-gray-600">Billed</div>
+                    <div class="ml-3 flex items-center"><input v-model="billingBind1" id="Y" name="billing" type="radio"
+                            class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" value="Y"
+                            checked=""><label for="Y"
+                            class="ml-2 block text-sm font-medium text-gray-700">Yearly</label>
+                    </div>
+                    <div class="flex items-center"><input v-model="billingBind1" id="M" name="billing" type="radio"
+                            class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" value="M"><label
+                            for="M" class="ml-2 block text-sm font-medium text-gray-700">Monthly</label></div>
+                </div>
+            </fieldset>
+        </div>
+        <div id="headlessui-radiogroup-:r9d:" role="radiogroup">
+            <div class="mt-2.5 grid grid-cols-2 gap-x-4 mb-8">
+                <div v-for="(option, index) in personalPrices" :key="index"
+                    class="mx-0 relative flex cursor-pointer rounded-lg bg-white p-4 shadow-sm focus:outline-none"
+                    role="radio" tabindex="0" @click="selectOptionPersonal(index)">
+                    <!-- 动态边框 -->
+                    <span class="pointer-events-none absolute -inset-px rounded-lg"
+                        :class="selectedEdition1 === index ? 'border-2 border-indigo-500' : 'border border-gray-300'"
+                        aria-hidden="true"></span>
+
+                    <span class="flex flex-1">
+                        <span class="flex flex-col">
+                            <span class="block text-sm font-medium text-gray-900">
+                                {{ index==0? "Standard Edition":"Enterprise Edition" }}
+                                <span v-if="index==1"
+                                    class="ml-2 inline-flex items-center rounded-xl bg-gray-100 px-2 py-0.5 text-xs font-normal text-gray-600">
+                                    Popular
+                                </span>
+                            </span>
+                            <span class="mt-4 text-sm font-medium text-gray-900">
+                                <span class="text-xl text-gray-600">$</span>
+                                <span v-if="billingBind1 == 'Y'">
+                                    <span class="text-xl text-gray-800">{{ parseInt(option.yprice.split('.')[0]).toLocaleString("en-US") }}</span>
+                                    <sup class="text-xs text-gray-600">{{ option.yprice.split('.')[1] }}</sup>
+                                </span>
+                                <span v-else>
+                                    <span class="text-xl text-gray-800">{{ parseInt(option.mprice.split('.')[0]).toLocaleString("en-US") }}</span>
+                                    <sup class="text-xs text-gray-600">{{ option.mprice.split('.')[1] }}</sup>
+                                </span> 
+                                &nbsp;
+                                <span class="text-gray-500">per
+                                    <span v-if="billingBind1 == 'Y'">year</span>
+                                    <span v-else>month</span>
+                                </span>
+                            </span>
+                        </span>
+                    </span>
+
+                    <!-- 选中时显示的图标 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                        class="h-5 w-5 text-indigo-600" :class="selectedEdition1 === index ? 'visible' : 'invisible'">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <!-- personal license begin end -->
+         </div>
+         <div v-else-if="selectedIndex1==1">
+        <!-- team license begin-->
+        <div class="flex items-center justify-between">
+            <h3 class="text-sm font-medium text-gray-600">How many people in the team&nbsp;would need the license?</h3>
+        </div>
+        <div class="mt-2" id="headlessui-radiogroup-:rc2:" role="radiogroup">
+            <div class="grid gap-4 grid-cols-5">
+                <div v-for="(option, index) in teamOptions" :key="index"
+                    class="bg-white shadow-sm text-gray-900 cursor-pointer group relative border rounded-md py-2.5 px-2 flex items-center justify-center text-sm font-medium hover:bg-gray-50 focus:outline-none sm:flex-1"
+                    :aria-checked="selectedUserTeam === index ? 'true' : 'false'" role="radio" tabindex="0"
+                    @click="userOptionTeam(index)">
+                    <span class="pointer-events-none absolute -inset-px rounded-md"
+                        :class="selectedUserTeam === index ? 'border-2 border-indigo-500' : 'border-2 border-transparent'"
+                        aria-hidden="true"></span>
+                    <span>{{ option }}</span>
+                </div>
+                <button @click="moreUsersClick" title="More than 10 users? Switch to the site license"
+                    class="bg-white shadow-sm text-gray-900 cursor-pointer group relative border rounded-md py-2.5 px-2 flex items-center justify-center text-sm font-medium hover:bg-gray-50 focus:outline-none sm:flex-1"
+                    type="button">More users</button>
+            </div>
+        </div>
+        <!-- 线 begin -->
+        <div v-show="selectedUserTeam!=null" class="w-full border-t border-gray-200 my-8"></div>
+        <!-- 线 end -->
+        <div v-show="selectedUserTeam!=null" class="flex">
+            <fieldset>
+                <div class="mb-4 flex items-center space-x-4">
+                    <div class="flex text-sm font-medium text-gray-600">Billed</div>
+                    <div class="ml-3 flex items-center"><input v-model="billingBind2" id="Y" name="billing" type="radio"
+                            class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" value="Y"
+                            checked=""><label for="Y"
+                            class="ml-2 block text-sm font-medium text-gray-700">Yearly</label>
+                    </div>
+                    <div class="flex items-center"><input v-model="billingBind2" id="M" name="billing" type="radio"
+                            class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" value="M"><label
+                            for="M" class="ml-2 block text-sm font-medium text-gray-700">Monthly</label></div>
+                </div>
+            </fieldset>
+        </div>
+        <div id="headlessui-radiogroup-:r9d:" role="radiogroup">
+            <div class="mt-2.5 grid grid-cols-2 gap-x-4 mb-8">
+                <div v-for="(option, index) in teamPrices[selectedUserTeam]" :key="index"
+                    class="mx-0 relative flex cursor-pointer rounded-lg bg-white p-4 shadow-sm focus:outline-none"
+                    role="radio" tabindex="0" @click="selectOptionTeam(index)">
+                    <!-- 动态边框 -->
+                    <span class="pointer-events-none absolute -inset-px rounded-lg"
+                        :class="selectedEdition2 === index ? 'border-2 border-indigo-500' : 'border border-gray-300'"
+                        aria-hidden="true"></span>
+
+                    <span class="flex flex-1">
+                        <span class="flex flex-col">
+                            <span class="block text-sm font-medium text-gray-900">
+                                {{ index==0? "Standard Edition":"Enterprise Edition" }}
+                                <span v-if="index==1"
+                                    class="ml-2 inline-flex items-center rounded-xl bg-gray-100 px-2 py-0.5 text-xs font-normal text-gray-600">
+                                    Popular
+                                </span>
+                            </span>
+                            <span class="mt-4 text-sm font-medium text-gray-900">
+                                <span class="text-xl text-gray-600">$</span>
+                                <span v-if="billingBind2 == 'Y'">
+                                    <span class="text-xl text-gray-800">{{ parseInt(option.yprice.split('.')[0]).toLocaleString("en-US") }}</span>
+                                    <sup class="text-xs text-gray-600">{{ option.yprice.split('.')[1] }}</sup>
+                                </span>
+                                <span v-else>
+                                    <span class="text-xl text-gray-800">{{ parseInt(option.mprice.split('.')[0]).toLocaleString("en-US") }}</span>
+                                    <sup class="text-xs text-gray-600">{{ option.mprice.split('.')[1] }}</sup>
+                                </span> 
+                                &nbsp;
+                                <span class="text-gray-500">per
+                                    <span v-if="billingBind2 == 'Y'">year</span>
+                                    <span v-else>month</span>
+                                </span>
+                            </span>
+                        </span>
+                    </span>
+
+                    <!-- 选中时显示的图标 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                        class="h-5 w-5 text-indigo-600" :class="selectedEdition2 === index ? 'visible' : 'invisible'">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <!-- team license end -->
+         </div>
+         <div v-else-if="selectedIndex1==2">
+        <!-- Site License begin-->
+        <div class="flex items-center justify-between">
+            <h3 class="text-sm font-medium text-gray-600">How many people in the organization&nbsp;would need the
+                license?
+            </h3>
+        </div>
+        <div class="mt-2" id="headlessui-radiogroup-:re5:" role="radiogroup">
+            <div class="grid gap-4 grid-cols-4">
+                <div v-for="(option, index) in siteOptions" :key="index"
+                    class="bg-white shadow-sm text-gray-900 cursor-pointer group relative border rounded-md py-2.5 px-2 flex items-center justify-center text-sm font-medium hover:bg-gray-50 focus:outline-none sm:flex-1"
+                    role="radio" tabindex="0" :aria-checked="selectedUserSite === index ? 'true' : 'false'"
+                    @click="userOptionSite(index)">
+                    <span>{{ option }}</span>
+                    <!-- 边框层 -->
+                    <span class="pointer-events-none absolute -inset-px rounded-md"
+                        :class="selectedUserSite === index ? 'border-2 border-indigo-500' : 'border border-transparent'"
+                        aria-hidden="true"></span>
+                </div>
+            </div>
+        </div>
+        <!-- 线 begin -->
+        <div class="w-full border-t border-gray-200 my-8"></div>
+        <!-- 线 end -->
+        <div id="headlessui-radiogroup-:r9d:" role="radiogroup">
+            <div class="mt-2.5 grid grid-cols-2 gap-x-4 mb-8">
+                <div v-for="(option, index) in sitePrices[selectedUserSite]" :key="index"
+                    class="mx-0 relative flex cursor-pointer rounded-lg bg-white p-4 shadow-sm focus:outline-none"
+                    role="radio" tabindex="0" @click="selectOptionSite(index)">
+                    <!-- 动态边框 -->
+                    <span class="pointer-events-none absolute -inset-px rounded-lg"
+                        :class="selectedEdition3 === index ? 'border-2 border-indigo-500' : 'border border-gray-300'"
+                        aria-hidden="true"></span>
+
+                    <span class="flex flex-1">
+                        <span class="flex flex-col">
+                            <span class="block text-sm font-medium text-gray-900">
+                                {{ index==0? "Standard Edition":"Enterprise Edition" }}
+                                <span v-if="index==1"
+                                    class="ml-2 inline-flex items-center rounded-xl bg-gray-100 px-2 py-0.5 text-xs font-normal text-gray-600">
+                                    Popular
+                                </span>
+                            </span>
+                            <span class="mt-4 text-sm font-medium text-gray-900">
+                                <span class="text-xl text-gray-600">$</span>
+                                <span class="text-xl text-gray-800">{{ parseInt(option.yprice.split('.')[0]).toLocaleString("en-US") }}</span>
+                                <sup class="text-xs text-gray-600">{{ option.yprice.split('.')[1] }}</sup>
+                                &nbsp;
+                                <span class="text-gray-500">per <span>year</span></span>
+                            </span>
+                        </span>
+                    </span>
+
+                    <!-- 选中时显示的图标 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                        class="h-5 w-5 text-indigo-600" :class="selectedEdition3 === index ? 'visible' : 'invisible'">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <!-- Site License end-->
+         </div>
+     
+     
+         <!-- 底部线 + 按钮 -->
+         <div v-if="selectedIndex1!=null" class="w-full border-t border-gray-200 my-8"></div>
+         <div v-if="selectedIndex1==0 || (selectedIndex1==1&&selectedUserTeam!=null) || (selectedIndex1==2&&selectedUserSite!=null)" class="flex justify-between items-center">
+        <button @click="compareClick"
+            class="group inline-flex text-sm font-medium text-blue-500 hover:text-blue-700 tracking-tight" type="button"
+            title="Compare Standard and Enterprise editions"><span class="hidden sm:block">Compare Standard and
+                Enterprise →</span><span class="block sm:hidden">Compare Editions →</span></button>
+        <div class="flex items-center justify-center">
+            <button @click="continueButtonClick" type="button" class="relative ml-6 py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none" :disabled="loading">
+                <span v-if="!loading" >Continue</span>
+                <svg v-else class="animate-spin absolute inset-0 m-auto h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <span v-if="loading" class="invisible">Continue</span>
+            </button>
+        </div>
+         </div>
+         <div v-if="selectedIndex1!=null" class="text-gray-600 py-4">
+             <div class="flex flex-start items-center"><div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 text-blue-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path></svg></div><span class="ml-3 text-sm font-normal text-gray-600">No commitment and no cancellation fees. You can <span class="font-semibold">cancel anytime</span>.</span></div>
+             <div class="flex flex-start items-center py-0.5"><div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 text-blue-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path></svg></div>
+                 <!-- <span class="ml-3 text-sm font-normal text-gray-600">The license key and invoice will be sent to&nbsp; {{activateEmail}} after payment</span> -->
+                 <span class="ml-3 text-sm font-normal text-gray-600">The license key and invoice will be sent to the email address provided on the payment page.</span>
+            </div>
+         </div>
+    </div>
+</template>
+
+<script setup>
+import ComparePage from './ComparePage.vue';
+import DashLoading from './DashLoading.vue';
+import { desDecrypt } from '@/desService';
+import { ref, onMounted} from 'vue';
+import axios from "axios";
+const loading = ref(false);
+const fmDialog = ref(null)
+const activateEmail = ref('')
+const isLoading = ref(true)
+
+onMounted(() => {
+    const licenseKeyInput = document.getElementById('licenseKey');
+    if (licenseKeyInput) {
+        activateEmail.value = licenseKeyInput.placeholder;
+    }
+  fetchPriceData()
+});
+function initPaddle(token, sandbox){
+    const script = document.createElement('script');
+    script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+    script.onload = () => {
+        if (sandbox){
+            Paddle.Environment.set("sandbox");
+        }
+        Paddle.Initialize({
+            eventCallback:()=>{
+                loading.value = false
+            },
+            token:token
+            // checkout:{settings:{variant: "one-page"}},
+        });
+    };
+    document.head.appendChild(script);
+}
+
+function fetchPriceData(){
+    try {
+        google.script.run.withSuccessHandler((response) =>{
+            handerData(response)
+        })
+        .withFailureHandler(function (e) {
+            handerError(e);
+        }).getEmailPriceList()
+    } catch (e) {
+        handerError(e);
+    }
+}
+function handerData(response){
+    initPaddle(response.token, response.sandbox)
+    isLoading.value = false
+    if(response.email){
+        activateEmail.value = response.email;
+    }
+    personalPrices.value = response.personalPrices;
+    teamPrices.value = response.teamPrices;
+    sitePrices.value = response.sitePrices;
+    teamOptions.value = response.teamOptions
+    siteOptions.value = response.siteOptions
+}
+function getPriceList(){
+    let url = 'https://pay.paddle.pipiform.com/google/form/payment/list'
+    axios.get(url)
+        .then(response => {
+            handerData(desDecrypt(response.data))
+        })
+        .catch(error => {
+            console.error('fail:', error);
+        });
+}
+function handerError(e){
+    getPriceList()
+}
+
+function openCheckout(priceId) {
+    if (!priceId){
+        loading.value = false
+    }
+    try {
+        if (activateEmail.value) {
+        Paddle.Checkout.open({
+            items: [{ priceId: priceId }],
+            customer: { email: activateEmail.value }
+        });
+    } else {
+        Paddle.Checkout.open({
+            items: [{ priceId: priceId }]
+        });
+    }
+    } catch (error) {
+        loading.value = false
+    }
+}
+
+// 定义选项数据
+const options1 = [
+    { title: 'Personal License', description: 'For your own use or for your coworker' },
+    { title: 'Team License', description: 'For smaller teams of up to 10 users' },
+    { title: 'Site License', description: 'For everyone in your company or school' }
+];
+// 当前选中选项的索引
+const selectedIndex1 = ref(null);
+
+const personalPrices = ref([])
+const teamPrices = ref([])
+const sitePrices = ref([])
+
+// const personalPrices = ref([{ yprice:"49.95", mprice:"19.95", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
+//                         { yprice:"79.95", mprice:"29.95", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}]);
+// const teamPrices =    ref([[{yprice:"99.90", mprice:"39.90", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
+//                         {yprice:"159.90", mprice:"59.90", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                         [{yprice:"149.85", mprice:"59.85", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
+//                         {yprice:"239.85", mprice:"89.85", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                         [{yprice:"199.80", mprice:"79.80", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
+//                         {yprice:"319.80", mprice:"119.80", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                         [{yprice:"249.75", mprice:"99.75", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
+//                         {yprice:"399.75", mprice:"149.75", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                         [{yprice:"299.70", mprice:"119.70", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
+//                         {yprice:"479.70", mprice:"179.70", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                         [{yprice:"349.65", mprice:"139.65", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
+//                         {yprice:"559.65", mprice:"209.65", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                         [{yprice:"399.60", mprice:"159.60", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
+//                         {yprice:"639.60", mprice:"239.60", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                         [{yprice:"449.55", mprice:"179.55", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
+//                         {yprice:"719.55", mprice:"269.55", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                         [{yprice:"499.50", mprice:"199.50", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"},
+//                         {yprice:"799.50", mprice:"299.50", yid:"pri_01j3jcxhhxwxrptr53ak26atjh", mid:"pri_01j3jcxhhxwxrptr53ak26atjh"}]
+//                        ]);
+// const sitePrices = ref([[{yprice:"495.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"595.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                      [{yprice:"795.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"990.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                      [{yprice:"1195.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"1495.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                      [{yprice:"1490.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"1990.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                      [{yprice:"1995.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"2495.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                      [{yprice:"2490.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"2990.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                      [{yprice:"2980.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"3480.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}],
+//                      [{yprice:"3475.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}, {yprice:"3975.00", yid:"pri_01j3jcxhhxwxrptr53ak26atjh"}]
+//                     ]);
+
+const teamOptions = ref(['2 users','3 users','4 users','5 users','6 users','7 users','8 users','9 users','10 users']);
+const siteOptions = ref(['25 users', '50 users', '100 users', '200 users', '500 users', '1000 users', '2000 users', 'Unlimited users']);
+
+// 当前选中选项的索引，初始为 null 表示未选中任何选项
+const selectedUserTeam = ref(null);
+const selectedUserSite = ref(null);
+const selectedEdition1 = ref(1);
+const selectedEdition2 = ref(1);
+const selectedEdition3 = ref(1);
+const billingBind1 = ref('Y');  // 默认选择 Yearly
+const billingBind2 = ref('Y');  // 默认选择 Yearly
+
+const selectOptionTop = (index) => {
+    console.log(index + " top")
+    selectedIndex1.value = index;
+};
+function selectOptionPersonal(index){
+    console.log(index+" edit person")
+    selectedEdition1.value = index
+}
+function selectOptionTeam(index){
+    console.log(index+" edit team")
+    selectedEdition2.value = index;
+}
+function selectOptionSite(index){
+    console.log(index+" edit site")
+    selectedEdition3.value = index;
+}
+const userOptionTeam = (index) => {
+    console.log(index+" user team")
+  selectedUserTeam.value = index;
+};
+const userOptionSite = (index) => {
+    console.log(index+" user site")
+  selectedUserSite.value = index;
+};
+
+function moreUsersClick(){
+    selectedIndex1.value = 2
+}
+function compareClick(){
+    fmDialog.value.setIsOpen(true)
+    console.log('compareClick')
+}
+function continueButtonClick(){
+    let priceId = ''
+    if (selectedIndex1.value == 0){
+        console.log(selectedEdition1.value)
+        console.log(personalPrices.value)
+        if (billingBind1.value == 'Y'){
+            priceId = personalPrices.value[selectedEdition1.value].yid
+        }else{
+            priceId = personalPrices.value[selectedEdition1.value].mid
+        }
+    }else if (selectedIndex1.value == 1){
+        console.log(selectedEdition2.value)
+        console.log(teamPrices.value)
+        if (billingBind2.value == 'Y'){
+            priceId = teamPrices.value[selectedUserTeam.value][selectedEdition2.value].yid
+        }else{
+            priceId = teamPrices.value[selectedUserTeam.value][selectedEdition2.value].mid
+        }
+    }else{
+        console.log(selectedUserSite.value)
+        console.log(sitePrices.value)
+        priceId = sitePrices.value[selectedUserSite.value][selectedEdition3.value].yid
+    }
+    if (priceId.includes("buy.stripe.com")){
+        window.open(priceId, '_blank');
+        return
+    }
+    loading.value = true
+    console.log(priceId)
+    openCheckout(priceId)
+}
+</script>
