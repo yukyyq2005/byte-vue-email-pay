@@ -313,25 +313,25 @@ let app_pk = ref('')
 let url = ref('')    
 const payPriceId = ref("")
 
-const is_test_mode = ref(true)
+const is_test_mode = true
 
 onMounted(() => {
 
-    //for 测试 begin
+    //for 生产环境 begin  price_1SWDGLKI2wvxceBv3ngC2NJX 价格1.03元
     app_pk.value = 'pk_live_51Rj7JcKI2wvxceBvr3OqEyAbkjX7tlsWj2MLntSMbpkb0vuC7iRF0AiML38jr30FfUXZhsb0FcCMo9JrkBrcn4xL00KBmYCKFh'
     url.value = 'https://stripe.my-addon.com/create-checkout-session'
     personalPrices.value = [
-        { yprice: '49.99', mprice: '19.95', yid: "price_1RnYrHKI2wvxceBvu1qEqHEb", mid: "price_1RnYrSKI2wvxceBvnArHqis4" },
-        { yprice: '79.99', mprice: '29.95', yid: "price_1RnYrHKI2wvxceBvu1qEqHEb", mid: "price_1RnYrSKI2wvxceBvnArHqis4" }
+        { yprice: '49.90', mprice: '19.90', yid: "price_1SWDBYKI2wvxceBvrZwkHlU3", mid: "price_1SWD9AKI2wvxceBvexINnH9Q" },
+        { yprice: '79.90', mprice: '29.90', yid: "price_1SWDC7KI2wvxceBvti6hgv9z", mid: "price_1SWDAGKI2wvxceBvldO3VfGH" }
     ];
-    //for 测试 end
+    //for 生产环境 end
 
     if (is_test_mode) {
         app_pk.value = 'pk_test_51Rj7JcKI2wvxceBvi0rfcA5nZHmAYIA0W6oMJV2GK0NLLYb4woCCZBXRNLD5PAaSREwKdOPe5dXBNQiTGrD2lAe900fwYhMc5F'
-        url.value = 'https://sandbox.stripe.my-addon.com/create-checkout-session'
-        personalPrices.value = [
-            { yprice: '49.99', mprice: '19.95', yid: "price_1RnYljKI2wvxceBvXKu77yLa", mid: "price_1RnYkSKI2wvxceBvJycNwi2E" },
-            { yprice: '79.99', mprice: '29.95', yid: "price_1RnYljKI2wvxceBvXKu77yLa", mid: "price_1RnYkSKI2wvxceBvJycNwi2E" }
+        url.value = 'https://sandbox.stripe.my-addon.com/create-checkout-session' 
+        personalPrices.value = [  
+            { yprice: '49.90', mprice: '19.90', yid: "price_1SWHHPKI2wvxceBvUGKDrAoA", mid: "price_1SWHGZKI2wvxceBvc0wveM31" },
+            { yprice: '79.90', mprice: '29.90', yid: "price_1SWHHmKI2wvxceBvogApN164", mid: "price_1SWHGtKI2wvxceBvAMtlsPsX" }
         ];
     }
     payPriceId.value = personalPrices.value[0].yid;//默认是包年
