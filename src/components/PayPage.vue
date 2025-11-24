@@ -4,7 +4,7 @@
     <div v-if="isLoading">
         <DashLoading/>
     </div>
-    <div v-else class="p-5">
+    <div v-else class="p-5 max-w-4xl mx-auto mt-5">
          <!-- Title -->
          <div class="text-center mb-8">
              <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">Upgrade to Pro</h2>
