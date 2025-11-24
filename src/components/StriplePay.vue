@@ -17,6 +17,7 @@
   background-color: white;
   border-radius: 4px;
   width: 90%;
+  max-width: 750px;
   height: 90%;
 }
 .modal-container2{
