@@ -313,7 +313,7 @@ let app_pk = ref('')
 let url = ref('')    
 const payPriceId = ref("")
 
-const is_test_mode = true
+const is_test_mode = false
 
 onMounted(() => {
 
